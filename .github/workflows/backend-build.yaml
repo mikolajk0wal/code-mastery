@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - apps/backend/**
+      - backend/**
       - .github/workflows/backend-*.yml
 
 concurrency:
