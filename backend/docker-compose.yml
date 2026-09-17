@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  psql-db:
+    image: postgres:latest
+    container_name: psql-db
+    restart: always
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=user
+      - POSTGRES_DB=my-db
+    ports:
+      - '5433:5432'
