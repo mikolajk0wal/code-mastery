@@ -5,7 +5,7 @@ on:
     branches: [ main ]
     paths:
       - backend/**
-      - .github/workflows/backend-*.yml
+      - .github/workflows/backend-*.yaml
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name }}
