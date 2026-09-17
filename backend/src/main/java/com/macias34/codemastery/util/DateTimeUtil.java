@@ -9,5 +9,6 @@ public class DateTimeUtil {
 		long currentTimestampMillis = System.currentTimeMillis();
 		Date currentDate = new Date(currentTimestampMillis);
 		return new Timestamp(currentDate.getTime());
+		System.out.println("test");
 	}
 }
