@@ -8,7 +8,6 @@ public class DateTimeUtil {
 	public static Timestamp getCurrentTimestamp() {
 		long currentTimestampMillis = System.currentTimeMillis();
 		Date currentDate = new Date(currentTimestampMillis);
-		System.out.println("testt");
 		return new Timestamp(currentDate.getTime());
 	}
 }
