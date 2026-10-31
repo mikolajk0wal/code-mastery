@@ -47,7 +47,7 @@ public class MailService {
             Transport.send(message);
             System.out.println("Wiadomość została wysłana.");
         } catch (MessagingException e) {
-            throw new RuntimeException("Błąd podczas wysyłania maila z potwierdzeniem");
+            throw new RuntimeException("Błąd podczas wysyłania maila z potwierdzeniem", e);
         }
 
     }
