@@ -19,6 +19,10 @@ public class MailService {
     private String username;
     @Value("${email.password}")
     private String password;
+    @Value("${email.host}")
+    private String host;
+    @Value("${email.port}")
+    private String port;
 
     public void sendMail(String title, String text, String recipient) {
         Properties props = new Properties();
