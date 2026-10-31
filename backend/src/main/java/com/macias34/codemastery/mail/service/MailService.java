@@ -15,6 +15,8 @@ import java.util.Properties;
 
 @Service
 public class MailService {
+    @Value("${email.from}")
+    private String from;
     @Value("${email.username}")
     private String username;
     @Value("${email.password}")
@@ -39,7 +41,7 @@ public class MailService {
 
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(username));
+            message.setFrom(new InternetAddress(from));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
             message.setSubject(title);
             message.setText(text);
