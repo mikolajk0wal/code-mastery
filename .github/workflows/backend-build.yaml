@@ -2,7 +2,7 @@ name: Backend deployment
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev ]
     paths:
       - backend/**
       - .github/workflows/backend-*.yaml
@@ -15,7 +15,6 @@ jobs:
   build:
     env:
       AWS_REGION: eu-central-1
-      ECR_REPOSITORY: code-mastery
     permissions:
       checks: write
       contents: read
@@ -30,6 +29,15 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: ⚙️ Set environment variables
+        run: |
+           if [[ "${{ github.ref_name }}" == "main" ]]; then
+             echo "ENV_NAME=prod" >> $GITHUB_ENV
+             echo "ECR_REPOSITORY=code-mastery" >> $GITHUB_ENV
+           else
+             echo "ENV_NAME=dev" >> $GITHUB_ENV
+             echo "ECR_REPOSITORY=code-mastery-dev" >> $GITHUB_ENV          
+          fi
       - name: Setup JDK
         uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c #v6.0.0
         with:
@@ -64,7 +72,7 @@ jobs:
       - name: 📥 Download current task definition
         run: |
           aws ecs describe-task-definition \
-          --task-definition code-mastery-task \
+          --task-definition code-mastery-${{ env.ENV_NAME }}-task \
           --query taskDefinition > task-definition.json
 
       - name: 📝 Render new task definition
@@ -72,13 +80,13 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@8d79160660ad39c402a16e5fc7cd2a32e8f7d6b7 #1.9.1
         with:
           task-definition: task-definition.json
-          container-name: code-mastery
+          container-name: code-mastery-${{ env.ENV_NAME }}
           image: ${{ steps.ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
 
       - name: 🚀 Deploy to Amazon ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@a00d4d57ac0de1a99b39fe469f3d898d38717c2b # 2.6.4
         with:
           task-definition: ${{ steps.render-container.outputs.task-definition }}
-          service: code-mastery-service
-          cluster: code-mastery-cluster
+          service: code-mastery-${{ env.ENV_NAME }}-service
+          cluster: code-mastery-${{ env.ENV_NAME }}-cluster
           wait-for-service-stability: true

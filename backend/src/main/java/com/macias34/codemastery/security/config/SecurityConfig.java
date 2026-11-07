@@ -36,7 +36,8 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-		http.csrf().disable()
+		http.cors().and() // <-- DODANE: włączenie CORS w Spring Security
+				.csrf().disable()
 				.exceptionHandling()
 				.authenticationEntryPoint(authEntryPoint)
 				.and().sessionManagement()
@@ -64,6 +65,29 @@ public class SecurityConfig {
 	}
 
 	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+
+		configuration.setAllowedOrigins(Arrays.asList(
+				"https://www.code-mastery.app",
+				"https://code-mastery.app",
+				"http://localhost:3000"
+		));
+
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+
+		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept"));
+
+		configuration.setAllowCredentials(true);
+
+		configuration.setMaxAge(3600L);
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
+	}
+
+	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
 			throws Exception {
 		return authenticationConfiguration.getAuthenticationManager();
@@ -72,7 +96,7 @@ public class SecurityConfig {
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
-	};
+	}
 
 	@Bean
 	public JwtAuthenticationFilter jwtAuthenticationFilter() {
